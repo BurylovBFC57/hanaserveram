@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div 
+    x-init="downloadCategories()"    
+    x-data="
+    {
+        host: 'https://test.informat74.ru/api',
+        categories: [],
+        async downloadCategories(){
+            let response = await fetch(`${this.host}/categories`)
+            this.categories = await response.json()
+            this.categories = this.categories.data
+            console.log(this.categories)
+          },
+    }"
+    >
+        <header class="flex bg-gray-900 text-white py-4 px-[10%]">
+            <a href="" class="w-1/4 text-orange-300 hover:text-orange-500">Apipost</a>
+            <nav class="w-2/4 flex gap-x-4">
+                <a href="" class="hover:text-orange-500">Posts</a>
+                <a href="" class="hover:text-orange-500">AdminPanel</a>
+            </nav>
+            <ul class="w-1/4 flex gap-x-4 justify-end" >
+                <li>
+                    <a href="" class="hover:text-orange-500">Regist</a>
+                </li>
+                <li>
+                    <a href="" class="hover:text-orange-500">Login</a>
+                </li>
+                <li>
+                    <a href="" class="hover:text-orange-500">Exit</a>
+                </li>
+            </ul>
+        </header>
+        <main>
+            <section class="py-6 px-[10%] grid gap-y-4">
+                <h1 class="text-3xl font-bold">Admin Panel</h1>
+                <div class="p-6 bg-gray-100 grid gap-y-4">
+                    <h2 class="text-2xl font-bold">Add Category</h2>
+                    <form class="flex"
+                    x-data="{
+                        category: '',
+                        error: {},
+                        async addCategory(){
+                            let response = await fetch(`${this.host}/categories`,{
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json' },
+                            body:   JSON.stringify({
+                                name: this.category
+                            })
+                        })
+                            this.error = await responce.json()
+                            console.log(await response.json())
+                        }
+                    }"
+                    x-on:submit.prevent="addCategory()"
+                    >
+                    <div class="grid w-2/3">
+                        <input type="text" class="w-2/3 border p-2" x-model="category">
+                        <span x-show="error.error" x-text="error.errors.name[0]"></span>
+                    </div>
+                        <button class="w-1/3 bg-gray-900 text-white hover:text-orange-500 border" 
+                        >AddCategory</button>
+                        <p x-text="country"></p>
+                    </form>
+                </div>
+                <div class="p-6 bg-gray-100 grid gap-y-4"
+                x-data="{
+
+                      async deleteCategories(id){
+                        let response = await fetch(`${this.host}/categories/${id}`,{
+                            method: 'DELETE',
+                            headers: {'Content-Type': 'application/json' },
+                        })
+                        this.downloadCategories()
+                      }
+                }"
+                >
+                    <h2 class="text-2xl font-bold">Download Categories</h2>
+                    <button class="w-1/3 bg-gray-900 text-white p-2 hover:text-orange-500"
+                    x-on:click="downloadCategories()"
+                    >Download Categories</button>
+                    <ul class="grid lg:grid-cols-3 gap-4 md:grid-cols-2 sm:grid-cols-1">
+                        <template x-for="category in categories">         
+                            <li class="grid gap-y-1 bg-white p-6"
+                            x-data="{
+                                isEdit: false
+                            }"
+                            >
+                                <div class="flex">
+                                    <h3 class="w-2/4 text-xl font-bold"
+                                    x-text="category.name"
+                                    >Item</h3>
+                                    <button class="p-2 w-1/4 bg-gray-900 border-r text-white hover:text-orange-500"
+                                    x-on:click="deleteCategories(category.id)"
+                                    >Delete</button>
+                                    <button class="p-2 w-1/4 bg-gray-900 text-white hover:text-orange-500"
+                                    x-on:click="isEdit = !isEdit"
+                                    >Edit</button>
+                                </div>
+                                
+                                <form class="flex" x-show="isEdit">
+                                    <input type="text" class="w-2/3 border p-2"
+                                    x-bind:value="category.name"
+                                    >
+                                    <button class="w-1/3 bg-gray-900 text-white hover:text-orange-500">Update</button>
+                                </form>
+                            </li>
+                        </template>
+                            <p x-show="categories.length == 0">Not Category</p>
+
+
+                    
+                    
+                </div>
+            </section>
+        </main>
+        <footer></footer>
+    </div>
+    
+</body>
+</html>
