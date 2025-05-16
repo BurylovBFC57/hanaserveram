@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="tailwindcss.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -82,6 +82,13 @@
                             headers: {'Content-Type': 'application/json' },
                         })
                         this.downloadCategories()
+                      },
+                      async updateCategories(id){
+                        let response = await fetch(`${this.host}/categories/${id}`,{
+                            method: 'UPDATE',
+                            headers: {'Content-Type': 'application/json' },
+                        })
+                        this.updateCategories()
                       }
                 }"
                 >
@@ -112,15 +119,15 @@
                                     <input type="text" class="w-2/3 border p-2"
                                     x-bind:value="category.name"
                                     >
-                                    <button class="w-1/3 bg-gray-900 text-white hover:text-orange-500">Update</button>
+                                    <button class="w-1/3 bg-gray-900 text-white hover:text-orange-500"
+                                    x-on:click="updateCategories()"
+                                    >Update</button>
                                 </form>
                             </li>
                         </template>
                             <p x-show="categories.length == 0">Not Category</p>
 
 
-                    
-                    
                 </div>
             </section>
         </main>
